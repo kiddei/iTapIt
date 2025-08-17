@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Access | iTapIt</title>
+  <link rel="stylesheet" href="index.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Event Info -->
+    <header class="event-info">
+      <h1 id="event-title">[Event Title Here]</h1>
+      <p id="event-venue">[Event Venue Here]</p>
+      <p id="event-date">[Event Date & Time Here]</p>
+    </header>
+
+    <!-- Passcode Form -->
+    <form id="eventForm" class="form">
+      <input 
+        type="password" 
+        id="passcode" 
+        placeholder="Enter Passcode" 
+        required 
+      />
+      <button type="submit">Take Me There</button>
+    </form>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>
+        Powered by 
+        <a href="https://itapit.com" target="_blank">iTapIt</a>
+      </p>
+      <p>Email: <a href="mailto:contact@itapit.com">contact@itapit.com</a></p>
+      <p>Contact: +63 912 345 6789</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook">
+        </a>
+        <a href="#" aria-label="Twitter">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/twitter.svg" alt="Twitter">
+        </a>
+        <a href="#" aria-label="Instagram">
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

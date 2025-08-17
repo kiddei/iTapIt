@@ -1,0 +1,131 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #f9fafc, #e9edf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+.container {
+  background: #fff;
+  padding: 3rem 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  width: 90%;
+  max-width: 700px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 60vh; /* ⬅️ Takes more vertical space */
+}
+
+/* Event Info */
+.event-info h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+}
+
+.event-info p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+/* Form */
+.form {
+  margin: 2.5rem 0;
+}
+
+.form input {
+  width: 60%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.form input:focus {
+  border-color: #2b4c9c; 
+}
+
+.form button {
+  margin-top: 1.2rem;
+  width: 60%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: #2b4c9c;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.15s ease;
+}
+
+.form button:hover {
+  background: #1f3874;
+  transform: translateY(-2px);
+}
+
+/* Footer */
+.footer {
+ margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.footer a {
+  color: #2b4c9c;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.socials {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.socials img {
+  width: 22px;
+  height: 22px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.socials img:hover {
+  opacity: 1;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    min-height: 80vh;
+  }
+
+  .event-info h1 {
+    font-size: 1.6rem;
+  }
+}
