@@ -25,12 +25,13 @@ async function syncCloudinaryToMongo() {
     const db = client.db("SharedLens");
     const mediaCollection = db.collection("media");
 
-    // Fetch first 100 images from Cloudinary
-    const result = await cloudinary.api.resources({
-      type: "upload",
-      resource_type: "image",
-      max_results: 100,
-    });
+   const result = await cloudinary.api.resources({
+  type: "upload",
+  resource_type: "image",
+  max_results: 100,
+  tags: true   // 🔑 This makes Cloudinary include tags in the response
+});
+
 
     for (const img of result.resources) {
       // Check if image already exists (by Cloudinary id)
@@ -41,10 +42,15 @@ async function syncCloudinaryToMongo() {
         const lastDoc = await mediaCollection.find().sort({ media_id: -1 }).limit(1).toArray();
         const nextId = lastDoc.length > 0 ? lastDoc[0].media_id + 1 : 1;
 
+        console.log("Checking image:", img.public_id, "tags:", img.tags);
+
+        // Check tags for "featured"
+        const isFeatured = (img.tags && img.tags.includes("featured")) ? 1 : 0;
+
         // Build new doc
         const newMedia = {
-          media_id: nextId,                // 🔥 auto-incrementing number
-          cloudinary_id: img.public_id,    // keep original id for reference
+          media_id: nextId,
+          cloudinary_id: img.public_id,
           media_link: img.secure_url,
           format: img.format,
           width: img.width,
@@ -57,10 +63,11 @@ async function syncCloudinaryToMongo() {
             hearts: 0,
           },
           tags: img.tags || [],
+          is_featured: isFeatured
         };
 
         await mediaCollection.insertOne(newMedia);
-        console.log(`✅ Added ${newMedia.media_id} (${img.public_id})`);
+        console.log(`✅ Added ${newMedia.media_id} (${img.public_id}) | Featured: ${isFeatured}`);
       } else {
         console.log(`⚡ Already exists: ${img.public_id}`);
       }
@@ -69,6 +76,28 @@ async function syncCloudinaryToMongo() {
     console.error("❌ Error syncing:", err);
   }
 }
+
+// Endpoint to generate signature for uploads
+app.get("/get-signature", (req, res) => {
+  const timestamp = Math.round(new Date().getTime() / 1000);
+
+  // Restrict resource type & tags for safety
+  const params = {
+    timestamp,
+    folder: "user_uploads", // uploads go here
+  };
+
+  const signature = cloudinary.utils.api_sign_request(params, process.env.CLOUD_SECRET);
+
+  res.json({
+    signature,
+    timestamp,
+    cloudName: process.env.CLOUD_NAME,
+    apiKey: process.env.CLOUD_KEY,
+    folder: "user_uploads",
+  });
+});
+
 
 app.use(express.static("public"));
 
