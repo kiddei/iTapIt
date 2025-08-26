@@ -1,0 +1,315 @@
+/* Add these styles to your existing CSS */
+
+/* Swiper Container Modifications */
+.swiper-container {
+  padding: 40px 0; /* Add more vertical padding to accommodate larger active slide */
+  min-height: 600px; /* Ensure container has enough height */
+  width: 100%;
+  position: relative;
+}
+
+.swiper-wrapper {
+  display: flex;
+  align-items: center;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  gap: 20px; /* Consistent spacing between slides */
+  width: max-content; /* Allow wrapper to expand */
+}
+
+.swiper-slide {
+  flex-shrink: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Photo Card Modifications */
+.photo-card {
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Active slide - Much bigger and more prominent */
+.swiper-slide.active .photo-card {
+  height: 500px !important;
+  width: 380px !important; /* Wider for more impact */
+  opacity: 1 !important;
+  transform: scale(1.1) !important; /* Even bigger scale */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 
+              0 0 40px rgba(139, 92, 246, 0.3) !important; /* Purple glow */
+  border: 3px solid rgba(139, 92, 246, 0.5); /* Subtle border */
+  z-index: 10;
+}
+
+/* Adjacent slides - Rectangular but smaller */
+.swiper-slide:not(.active) .photo-card {
+  width: 280px; /* Longer/wider than before */
+  height: 320px; /* Rectangular aspect ratio */
+}
+
+/* Distance-based styling for inactive slides */
+.photo-card.distance-1 {
+  height: 320px !important;
+  width: 280px !important;
+  opacity: 0.75 !important;
+  transform: scale(0.9) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25) !important;
+}
+
+.photo-card.distance-2 {
+  height: 280px !important;
+  width: 240px !important;
+  opacity: 0.6 !important;
+  transform: scale(0.8) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.photo-card.distance-3 {
+  height: 240px !important;
+  width: 200px !important;
+  opacity: 0.4 !important;
+  transform: scale(0.7) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+.photo-card.distance-far {
+  height: 200px !important;
+  width: 160px !important;
+  opacity: 0.25 !important;
+  transform: scale(0.6) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Image styling */
+.photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.6s ease;
+}
+
+/* Active slide image enhancement */
+.swiper-slide.active .photo-card img {
+  filter: brightness(1.1) contrast(1.05) saturate(1.1);
+}
+
+/* Navigation button adjustments with better visibility */
+.swiper-nav-btn {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.swiper-nav-btn:hover {
+  background: rgba(139, 92, 246, 0.9);
+  border-color: rgba(139, 92, 246, 0.8);
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5);
+  opacity: 1;
+}
+
+/* Show navigation hints when adjacent slides are available */
+.swiper-nav-btn.has-prev,
+.swiper-nav-btn.has-next {
+  opacity: 0.9;
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.swiper-nav-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.swiper-nav-btn.disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced slide hover effects for better navigation preview */
+.swiper-slide:not(.active) {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.swiper-slide:not(.active):hover .photo-card {
+  transform: scale(var(--hover-scale, 1.05)) !important;
+  opacity: 0.9 !important;
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Pagination dots enhancement */
+.pagination-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.pagination-dot.active {
+  background: linear-gradient(90deg, #8B5CF6 0%, #3B82F6 100%);
+  transform: scale(1.3);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+}
+
+.pagination-dot:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .swiper-container {
+    padding: 30px 0;
+    min-height: 520px;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+  
+  .swiper-wrapper {
+    gap: 15px; /* Reduce gap on tablet */
+  }
+  
+  .swiper-slide.active .photo-card {
+    height: 400px !important;
+    width: 300px !important; /* Slightly smaller for better fit */
+    transform: scale(1.05) !important; /* Reduce scale to prevent overflow */
+  }
+  
+  .photo-card.distance-1 {
+    height: 280px !important;
+    width: 220px !important;
+  }
+  
+  .photo-card.distance-2 {
+    height: 240px !important;
+    width: 180px !important;
+  }
+  
+  .photo-card.distance-3 {
+    height: 200px !important;
+    width: 150px !important;
+  }
+  
+  .photo-card.distance-far {
+    height: 160px !important;
+    width: 120px !important;
+  }
+  
+  /* Adjust navigation buttons for mobile */
+  .swiper-nav-btn {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .swiper-prev {
+    left: -35px !important;
+  }
+  
+  .swiper-next {
+    right: -35px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .swiper-container {
+    padding: 25px 0; /* Remove horizontal padding for precise centering */
+    min-height: 450px;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  .swiper-wrapper {
+    gap: 12px; /* Even smaller gap on mobile */
+    justify-content: flex-start; /* Align to start for better control */
+  }
+  
+  .swiper-slide.active .photo-card {
+    height: 350px !important;
+    width: 260px !important; /* Optimized for mobile screens */
+    transform: scale(1.02) !important; /* Minimal scale to prevent issues */
+  }
+  
+  .photo-card.distance-1 {
+    height: 250px !important;
+    width: 190px !important;
+  }
+  
+  .photo-card.distance-2 {
+    height: 210px !important;
+    width: 160px !important;
+  }
+  
+  .photo-card.distance-3 {
+    height: 180px !important;
+    width: 130px !important;
+  }
+  
+  .photo-card.distance-far {
+    height: 150px !important;
+    width: 110px !important;
+  }
+  
+  /* Mobile navigation adjustments */
+  .swiper-nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .swiper-prev {
+    left: -30px !important;
+  }
+  
+  .swiper-next {
+    right: -30px !important;
+  }
+  
+  /* Ensure container doesn't cause horizontal scroll */
+  .position-relative {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Ensure proper mobile layout */
+  .swiper-container .swiper-wrapper {
+    transform-origin: center center;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+  .swiper-slide.active .photo-card {
+    height: 320px !important;
+    width: 240px !important;
+    transform: scale(1.0) !important; /* No scaling on very small screens */
+  }
+  
+  .photo-card.distance-1 {
+    height: 220px !important;
+    width: 170px !important;
+  }
+  
+  .photo-card.distance-2 {
+    height: 190px !important;
+    width: 140px !important;
+  }
+}

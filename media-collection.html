@@ -6,11 +6,16 @@
   <title>Home</title>
   <!-- Custom Style -->
   <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="swiper.css">
   <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" 
   integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
   <!-- Google Font (Poppins) -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Swiper CSS 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>-->
+
+  
 </head>
 <body> 
   <div class="overlay"></div>
@@ -22,7 +27,7 @@
           <!-- Left: Logo + Name -->
           <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
             <img src="images/icon.svg" alt="Logo" width="28" class="me-2">
-            iTapIt
+            iTapIT
           </a>
 
           <!-- Hamburger -->
@@ -70,7 +75,7 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-8 text-center text-white">
         <!-- Hero Title -->
-        <h1 class="hero-title mb-4">Discover and Share on <span class="text-gradient">iTapIt</span></h1>
+        <h1 class="hero-title mb-4">Discover and Share on <span class="text-gradient">iTapIT</span></h1>
 
         <!-- Hero Description -->
         <p class="hero-description mb-5 mx-auto" style="max-width: 600px;">
@@ -100,8 +105,111 @@
     </div>
   </main>
   
+<!-- Featured Photos -->
+<section class="py-5" style="padding: 100px 0 !important;">
+  <div class="container-fluid px-4">
+    <!-- Section Title -->
+    <div class="row" style="margin-bottom: 30px;">
+      <div class="col-12 text-center">
+        <h2 class="text-white fw-bold mb-3" style="font-size: 3.5rem;">Featured Photos</h2>
+        <p class="text-white-50" style="font-size: 1.3rem; max-width: 600px; margin: 0 auto;">Discover amazing captures from our community of talented photographers</p>
+      </div>
+    </div>
+
+    <!-- Swiper Container -->
+    <div class="position-relative">
+      <div class="swiper-container overflow-hidden">
+        <div class="swiper-wrapper d-flex align-items-center" id="swiperWrapper">
+          
+          <!-- Photo Card 1 (Left - Smaller) -->
+          <div class="swiper-slide">
+            <div class="photo-card" style="height: 300px; opacity: 0.6; transform: scale(0.8);">
+              <div class="card-content rounded-4 h-100 overflow-hidden">
+                <img src="images/cat.jpg" alt="Featured Photo 1" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Card 2 (Left Center) -->
+          <div class="swiper-slide">
+            <div class="photo-card" style="height: 380px; opacity: 0.8; transform: scale(0.9);">
+              <div class="card-content rounded-4 h-100 overflow-hidden">
+                <img src="images/dog.jpg" alt="Featured Photo 2" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Card 3 (Center - Active/Largest) -->
+          <div class="swiper-slide active">
+            <div class="photo-card" style="height: 450px; opacity: 1; transform: scale(1);">
+              <div class="card-content rounded-4 h-100 overflow-hidden">
+                <img src="images/man.jpg" alt="Featured Photo 3" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Card 4 (Right Center) -->
+          <div class="swiper-slide">
+            <div class="photo-card" style="height: 380px; opacity: 0.8; transform: scale(0.9);">
+              <div class="card-content rounded-4 h-100 overflow-hidden">
+                <img src="images/blur.jpg" alt="Featured Photo 4" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Card 5 (Right - Smaller) -->
+          <div class="swiper-slide">
+            <div class="photo-card" style="height: 300px; opacity: 0.6; transform: scale(0.8);">
+              <div class="card-content rounded-4 h-100 overflow-hidden">
+                <img src="images/lola.jpg" alt="Featured Photo 5" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional cards for continuous loop -->
+          <div class="swiper-slide">
+            <div class="photo-card" style="height: 250px; opacity: 0.4; transform: scale(0.7);">
+              <div class="card-content rounded-4 h-100 overflow-hidden">
+                <img src="images/nature.jpg" alt="Featured Photo 6" class="w-100 h-100 object-fit-cover">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button class="swiper-nav-btn swiper-prev position-absolute top-50 start-0 translate-middle-y" style="z-index: 10; left: -50px !important;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-chevron-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+        </svg>
+      </button>
+      
+      <button class="swiper-nav-btn swiper-next position-absolute top-50 end-0 translate-middle-y" style="z-index: 10; right: -50px !important;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-chevron-right" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Dots Indicator -->
+    <div class="d-flex justify-content-center mt-4">
+      <div class="swiper-pagination d-flex gap-2">
+        <span class="pagination-dot active"></span>
+        <span class="pagination-dot"></span>
+        <span class="pagination-dot"></span>
+        <span class="pagination-dot"></span>
+        <span class="pagination-dot"></span>
+        <span class="pagination-dot"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
   <!-- Bootstrap JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" 
   integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  <script src="swiper.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 </body>
 </html>
