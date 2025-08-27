@@ -1,5 +1,6 @@
-let currentSlide = 2; // Start with middle slide active (index 2)
 const slides = document.querySelectorAll('.swiper-slide');
+let currentSlide = Math.floor(slides.length / 2); // ✅ now slides exists
+
 const wrapper = document.getElementById('swiperWrapper');
 const dots = document.querySelectorAll('.pagination-dot');
 
@@ -58,10 +59,10 @@ function updateSlides() {
   // Update navigation button states
   updateNavigationStates();
   
-  // Update dots
-  dots.forEach((dot, index) => {
-    dot.classList.toggle('active', index === Math.min(currentSlide, dots.length - 1));
-  });
+dots.forEach((dot, index) => {
+  dot.classList.toggle('active', index === currentSlide % dots.length);
+});
+
 }
 
 // Update navigation button states based on available slides
@@ -247,19 +248,16 @@ function getTotalCarouselWidth(dimensions) {
 
 document.querySelector('.swiper-prev').addEventListener('click', (e) => {
   e.preventDefault();
-  if (currentSlide > 0) {
-    currentSlide--;
-    updateSlides();
-  }
+  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+  updateSlides();
 });
 
 document.querySelector('.swiper-next').addEventListener('click', (e) => {
   e.preventDefault();
-  if (currentSlide < slides.length - 1) {
-    currentSlide++;
-    updateSlides();
-  }
+  currentSlide = (currentSlide + 1) % slides.length;
+  updateSlides();
 });
+
 
 dots.forEach((dot, index) => {
   dot.addEventListener('click', (e) => {
@@ -312,15 +310,14 @@ slides.forEach((slide, index) => {
 
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowLeft' && currentSlide > 0) {
-    currentSlide--;
+  if (e.key === 'ArrowLeft') {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
     updateSlides();
-  } else if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) {
-    currentSlide++;
+  } else if (e.key === 'ArrowRight') {
+    currentSlide = (currentSlide + 1) % slides.length;
     updateSlides();
   }
 });
-
 // Auto-play with pause on hover (optional)
 let autoPlayInterval;
 const startAutoPlay = () => {
@@ -352,20 +349,21 @@ wrapper.addEventListener("touchend", (e) => {
   handleSwipeGesture();
 });
 
+
+// swipe
 function handleSwipeGesture() {
   const swipeThreshold = 50; 
   const swipeDistance = touchEndX - touchStartX;
 
   if (Math.abs(swipeDistance) > swipeThreshold) {
-    if (swipeDistance > 0 && currentSlide > 0) {
+    if (swipeDistance > 0) {
       // swipe right → previous
-      currentSlide--;
-      updateSlides();
-    } else if (swipeDistance < 0 && currentSlide < slides.length - 1) {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    } else {
       // swipe left → next
-      currentSlide++;
-      updateSlides();
+      currentSlide = (currentSlide + 1) % slides.length;
     }
+    updateSlides();
   }
 }
 
