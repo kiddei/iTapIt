@@ -1,0 +1,128 @@
+/* Masonry container */
+.masonry {
+  column-count: 4; /* number of columns */
+  column-gap: 1rem;
+}
+
+/* Each item */
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Images inside */
+.masonry-item img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.masonry-item img:hover {
+  transform: scale(1.05);
+
+}
+
+.masonry-item video {
+  width: 100%;
+  max-height: 400px; /* keeps videos from being too tall */
+  display: block;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #000; /* fallback background */
+}
+
+.masonry-item video:hover {
+  transform: scale(1.05);
+}
+
+/* Lightbox hidden by default */
+#lightbox {
+  display: flex;                /* flex layout, but hidden with opacity */
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+
+  opacity: 0;                   /* hidden */
+  visibility: hidden;           /* prevents click-through */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Lightbox content */
+#lightbox .lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#lightbox img,
+#lightbox video {
+  max-width: 90vw;   /* never wider than screen */
+  max-height: 90vh;  /* never taller than screen */
+  object-fit: contain; /* keep aspect ratio */
+  border-radius: 12px;
+}
+
+/* When active */
+#lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+/* Responsive columns */
+@media (max-width: 1200px) {
+  .masonry {
+    column-count: 3;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .masonry {
+    column-count: 3; /* keep 3 instead of dropping to 2 */
+    column-gap: 0.7rem;
+  }
+}
+
+/* Small phones (~400px) */
+@media (max-width: 480px) {
+  .masonry {
+    column-count: 2; /* force 2 columns even on mobile */
+    column-gap: 0.5rem;
+  }
+   .masonry-item {
+    margin-bottom: 0.5em;
+  }
+}
+
+/* Ultra small (<360px) */
+@media (max-width: 360px) {
+  .masonry {
+    column-count: 2; /* fallback if screen is too tiny */
+    column-gap: 0.5rem;
+  }
+   .masonry-item {
+    margin-bottom: 0.6rem;
+  }
+}

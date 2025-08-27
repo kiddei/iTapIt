@@ -123,6 +123,23 @@ header {
   -webkit-text-fill-color: transparent;
 }
 
+.gradient-text{
+  background: linear-gradient(90deg, #00F5FF 0%, #00FF41 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.navbar-nav .nav-link.active {
+  background: linear-gradient(90deg, #00F5FF 0%, #00FF41 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent !important;
+  font-weight: 700;
+}
+
 .navbar-nav .nav-link:hover::after {
   width: 100%;
 }
