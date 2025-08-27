@@ -64,8 +64,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative; /* ✅ add this */
 }
-
 #lightbox img,
 #lightbox video {
   max-width: 90vw;   /* never wider than screen */
@@ -126,3 +126,102 @@
     margin-bottom: 0.6rem;
   }
 }
+
+.media-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.like-overlay {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
+.heart-icon {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+}
+
+.heart-icon.animate-like {
+  animation: pop 0.6s ease forwards;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.5); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.like-count {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+.lightbox-like-overlay {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.6);
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.lightbox-like-overlay .heart-icon {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.lightbox-like-overlay .like-count {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.doubletap-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px; /* bigger */
+  height: 160px;
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0;
+  pointer-events: none;
+  animation: big-heart-pop 0.8s forwards;
+}
+
+@keyframes big-heart-pop {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+  60% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+.mini-heart {
+  pointer-events: none;
+}
+
+@keyframes float-up {
+  from { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+  to { 
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2); 
+    opacity: 0; 
+  }
+}
+

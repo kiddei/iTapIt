@@ -57,11 +57,7 @@ async function syncCloudinaryToMongo() {
           height: img.height,
           bytes: img.bytes,
           created_at: new Date(img.created_at),
-          reactions: {
-            likes: 0,
-            dislikes: 0,
-            hearts: 0,
-          },
+          reactions: 0,
           tags: img.tags || [],
           is_featured: isFeatured
         };
@@ -119,6 +115,30 @@ app.get("/media", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching media");
+  }
+});
+
+// Increment like count for a media item
+app.post("/like/:id", async (req, res) => {
+  try {
+    const mediaId = parseInt(req.params.id, 10);
+    const db = client.db("SharedLens");
+    const mediaCollection = db.collection("media");
+
+    const result = await mediaCollection.findOneAndUpdate(
+      { media_id: mediaId },
+      { $inc: { reactions: 1 } },
+      { returnDocument: "after" } // gives the updated doc
+    );
+
+    if (!result.value) {
+      return res.status(404).json({ success: false, message: "Media not found" });
+    }
+
+    res.json({ success: true, newCount: result.value.reactions });
+  } catch (err) {
+    console.error("❌ Error liking media:", err);
+    res.status(500).json({ success: false });
   }
 });
 
