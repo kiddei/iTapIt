@@ -147,6 +147,7 @@
 .swiper-slide:not(.active) {
   cursor: pointer;
   transition: all 0.3s ease;
+  opacity: 0.4;
 }
 
 .swiper-slide:not(.active):hover .photo-card {

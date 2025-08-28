@@ -114,6 +114,9 @@
    .masonry-item {
     margin-bottom: 0.5em;
   }
+  .hero-description{
+    font-size: 0.9rem;
+  }
 }
 
 /* Ultra small (<360px) */
@@ -225,3 +228,32 @@
   }
 }
 
+.custom-filter-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-filter-btn:hover{
+  background: #3B82F6; 
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.custom-filter-btn.active {
+  background: #3B82F6; 
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Prevent buttons from stretching full width */
+.custom-filter-btn {
+  flex: 0 0 auto; 
+}

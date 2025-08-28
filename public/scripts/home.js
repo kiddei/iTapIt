@@ -12,45 +12,106 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch("/media");
     const media = await res.json();
 
-    // Sort by reactions desc and take first 6 to match your current layout/dots
-    const top = media
-      .sort((a, b) => (b.reactions || 0) - (a.reactions || 0))
+    // Filter out items with 0 or undefined reactions
+    const filtered = media.filter(item => item.reactions && item.reactions > 0);
+
+    // Sort by reactions descending and take first 7 to match your layout/dots
+    const sorted = filtered
+      .sort((a, b) => b.reactions - a.reactions)
       .slice(0, 7);
+
+    // Rearrange items: center first (position 3), then alternate left-right
+    // Positions: [0, 1, 2, 3, 4, 5, 6] (7 slides total)
+    // Order: [2nd, 4th, 6th, 1st, 3rd, 5th, 7th] (center=1st, then alternate)
+    const positionMap = [3, 2, 4, 1, 5, 0, 6]; // Where each sorted item should go
+    const arrangedItems = new Array(7);
+    
+    sorted.forEach((item, index) => {
+      if (index < positionMap.length) {
+        arrangedItems[positionMap[index]] = item;
+      }
+    });
 
     const slides = document.querySelectorAll("#swiperWrapper .swiper-slide");
 
     slides.forEach((slide, i) => {
-      const card = slide.querySelector(".card-content");
-      if (!card) return;
+    const card = slide.querySelector(".card-content");
+    if (!card) return;
 
-      // ensure overlay positioning works
-      card.classList.add("position-relative");
+    // ensure overlay positioning works
+    card.classList.add("position-relative");
 
-      // clear existing media
-      card.innerHTML = "";
+    // clear existing media
+    card.innerHTML = "";
 
-      const item = top[i];
-      if (!item) return;
+    const item = arrangedItems[i];
+    // Remove the early return - let the logic flow to create placeholder if no item
 
+    let el;
+    if (item) {
       // create media element
-      let el;
       if (/mp4|mov|webm/i.test(item.format)) {
         el = document.createElement("video");
         el.src = item.media_link;
         el.muted = true;
         el.loop = true;
         el.playsInline = true;
-        // don't force autoplay; your custom slider can control play on active
       } else {
         el = document.createElement("img");
         el.src = item.media_link;
         el.alt = item.cloudinary_id || "featured";
       }
-      el.className = "w-100 h-100 object-fit-cover";
-      card.appendChild(el);
+    } else {
+      // Enhanced placeholder with icon (this will now run when item is undefined)
+      el = document.createElement("div");
+      el.style.width = "100%";
+      el.style.height = "100%";
+      el.style.background = "rgba(128, 128, 128, 0.2)"; // Gray transparent
+      el.style.border = "2px dashed rgba(128, 128, 128, 0.4)";
+      el.style.borderRadius = "8px";
+      el.style.display = "flex";
+      el.style.flexDirection = "column";
+      el.style.alignItems = "center";
+      el.style.justifyContent = "center";
+      el.style.color = "rgba(128, 128, 128, 0.7)";
+      el.style.fontSize = "14px";
+      el.style.fontFamily = "system-ui, -apple-system, sans-serif";
+      
+      // Create camera icon using SVG
+      const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      iconSvg.setAttribute("width", "48");
+      iconSvg.setAttribute("height", "48");
+      iconSvg.setAttribute("viewBox", "0 0 24 24");
+      iconSvg.setAttribute("fill", "none");
+      iconSvg.setAttribute("stroke", "currentColor");
+      iconSvg.setAttribute("stroke-width", "1.5");
+      iconSvg.style.marginBottom = "12px";
+      iconSvg.style.opacity = "0.6";
+      
+      const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      iconPath.setAttribute("d", "M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z");
+      
+      const iconCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      iconCircle.setAttribute("cx", "12");
+      iconCircle.setAttribute("cy", "13");
+      iconCircle.setAttribute("r", "4");
+      
+      iconSvg.appendChild(iconPath);
+      iconSvg.appendChild(iconCircle);
+      
+      // Create text element
+      const textEl = document.createElement("span");
+      textEl.textContent = "No featured photo";
+      textEl.style.textAlign = "center";
+      textEl.style.opacity = "0.7";
+      
+      el.appendChild(iconSvg);
+      el.appendChild(textEl);
+    }
 
-     
-    });
+    el.className = "w-100 h-100 object-fit-cover";
+    card.appendChild(el);
+  });
 
     // Optionally play the center (active) slide if it's a video
     const activeVideo = document.querySelector("#swiperWrapper .swiper-slide.active video");
