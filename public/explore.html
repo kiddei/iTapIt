@@ -11,6 +11,7 @@
   <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" 
   integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <!-- Google Font (Poppins) -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- Swiper CSS 
@@ -119,6 +120,24 @@
 
 </section>
 
+<!-- Manage controls (top left) -->
+<div id="manage-controls" class="d-flex justify-content-start mb-3">
+  <button id="manage-toggle" class="manage-btn">
+    Manage
+  </button>
+</div>
+<!-- Bulk delete bar (fixed bottom) -->
+<div id="bulk-delete-bar" class="bulk-delete-bar bg-dark text-white p-3 shadow-lg"
+     style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1050;">
+  <div class="d-flex justify-content-between align-items-center">
+    <span id="selected-count">0 selected</span>
+    <div>
+      <button id="bulk-cancel" class="btn btn-secondary btn-sm me-2">Cancel</button>
+      <button id="bulk-delete" class="btn btn-danger btn-sm">Delete Selected</button>
+    </div>
+  </div>
+</div>
+
   <!-- ALL MEDIA -->
   <section class="container-fluid py-4">
   <div id="gallery" class="masonry">
@@ -202,8 +221,36 @@
   </svg>
   <span class="like-count">0</span>
 </div>
+
+<!-- 🔹 Delete button for host -->
+    <button id="lightbox-delete-btn" 
+            class="delete-btn btn btn-sm btn-danger rounded-pill d-inline-flex align-items-center gap-1"
+            style="display:none">
+      <i class="bi bi-trash"></i>
+    </button>
   </div>
 </div>
+
+<!-- Custom Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white rounded shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Deletion</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="delete-message">Are you sure you want to delete this item?</p>
+        <div id="delete-preview" class="d-flex flex-wrap justify-content-center gap-2 mt-3"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirm-delete" class="btn btn-danger btn-sm">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <!-- Bootstrap JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" 
   integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>

@@ -142,6 +142,32 @@ app.post("/like/:id", async (req, res) => {
   }
 });
 
+// Delete media (DB + Cloudinary)
+app.delete("/delete/:id", async (req, res) => {
+  try {
+    const mediaId = parseInt(req.params.id, 10);
+    const db = client.db("SharedLens");
+    const mediaCollection = db.collection("media");
+
+    // Find the doc so we know its Cloudinary ID
+    const mediaDoc = await mediaCollection.findOne({ media_id: mediaId });
+    if (!mediaDoc) {
+      return res.status(404).json({ success: false, message: "Media not found" });
+    }
+
+    // 1. Delete from Cloudinary
+    await cloudinary.uploader.destroy(mediaDoc.cloudinary_id);
+
+    // 2. Delete from MongoDB
+    await mediaCollection.deleteOne({ media_id: mediaId });
+
+    res.json({ success: true, message: "Deleted from DB & Cloudinary" });
+  } catch (err) {
+    console.error("❌ Error deleting media:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 
 // Start server
 app.listen(port, () => {

@@ -1,5 +1,17 @@
+// At the top of your index.js (or explore.js)
+const isHost = sessionStorage.getItem("isHost") === "true";
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   const gallery = document.getElementById("gallery");
+  let originalOrder = []; // will store DB order
+
+  if (isHost) {
+  document.getElementById("manage-controls").style.display = "block";
+} else {
+  const el = document.getElementById("manage-controls");
+  if (el) el.remove(); // completely remove from DOM
+}
 
   try {
     // 🔹 Fetch from backend
@@ -9,36 +21,53 @@ document.addEventListener("DOMContentLoaded", async () => {
     gallery.innerHTML = "";
 
     mediaList.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "masonry-item";
+  const div = document.createElement("div");
+  div.className = "masonry-item";
 
-      // Wrap media + like UI
-      div.innerHTML = `
-        <div class="media-wrapper" data-id="${item.media_id}">
-          ${item.format.match(/mp4|mov|webm/i)
-            ? `<video data-src="${item.media_link}" preload="none" muted playsinline loop class="lazy"></video>`
-            : `<img data-src="${item.media_link}" alt="${item.cloudinary_id}" class="lazy">`
-          }
-          <div class="like-overlay">
-            <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 
-                       4.5 2.09C13.09 3.81 14.76 3 16.5 3 
-                       19.58 3 22 5.42 22 8.5c0 3.78-3.4 
-                       6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-            <span class="like-count">${item.reactions || 0}</span>
-          </div>
-        </div>
-      `;
+  div.innerHTML = `
+    <div class="media-wrapper" data-id="${item.media_id}">
+      ${item.format.match(/mp4|mov|webm/i)
+        ? `<video data-src="${item.media_link}" preload="none" muted playsinline loop class="lazy"></video>`
+        : `<img data-src="${item.media_link}" alt="${item.cloudinary_id}" class="lazy">`
+      }
+      <div class="like-overlay">
+        <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 
+                   4.5 2.09C13.09 3.81 14.76 3 16.5 3 
+                   19.58 3 22 5.42 22 8.5c0 3.78-3.4 
+                   6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span class="like-count">${item.reactions || 0}</span>
+      </div>
 
-      gallery.appendChild(div);
-    });
+   
 
-    // Re-run setup
+${isHost ? `
+  <input type="checkbox" class="select-checkbox form-check-input" 
+         style="display:none; position:absolute; top:8px; left:8px; z-index:10;"
+         data-id="${item.media_id}">
+  <button class="delete-btn btn btn-sm btn-danger rounded-pill align-items-center gap-1"
+        data-id="${item.media_id}" aria-label="Delete">
+  <i class="bi bi-trash"></i>
+</button>
+` : ""}
+
+    </div>
+  `;
+  gallery.appendChild(div);
+});
+
+    // ✅ Capture original DB order AFTER rendering
+    originalOrder = Array.from(gallery.children);
+
+    // Init helpers
     setupLazyLoading();
     setupLightbox();
-    setupLikes();
+
+
+    // Setup filters
+    setupFilters(gallery, originalOrder);
 
   } catch (err) {
     console.error("Failed to load media:", err);
@@ -81,6 +110,7 @@ function setupLightbox() {
   const lightboxVideo = document.getElementById("lightbox-video");
   const lightboxVideoSrc = document.getElementById("lightbox-video-src");
   const closeBtn = document.querySelector(".close");
+  const lightboxDeleteBtn = document.getElementById("lightbox-delete-btn");
 
   const lightboxHeart = lightbox.querySelector(".lightbox-like-overlay .heart-icon");
   const lightboxCount = lightbox.querySelector(".lightbox-like-overlay .like-count");
@@ -94,6 +124,23 @@ function setupLightbox() {
 
   // sync count from gallery
   const wrapper = item.closest(".media-wrapper");
+
+if (isHost) {
+  lightboxDeleteBtn.style.display = "inline-flex";
+  lightboxDeleteBtn.onclick = () => {
+    const mediaEl = wrapper.querySelector("img, video");
+    showDeleteConfirm([{
+      id: wrapper.dataset.id,
+      src: mediaEl.currentSrc || mediaEl.dataset.src,
+      type: mediaEl.tagName.toLowerCase()
+    }]);
+    closeLightbox(); // close the lightbox while confirming
+  };
+} else {
+  lightboxDeleteBtn.style.display = "none";
+}
+
+  
   if (wrapper) {
     const galleryCount = wrapper.querySelector(".like-count");
     lightboxCount.textContent = galleryCount.textContent;
@@ -247,5 +294,193 @@ function spawnMiniHeart(wrapper) {
   wrapper.appendChild(mini);
   setTimeout(() => mini.remove(), duration);
 }
+function setupFilters(gallery, originalOrder) {
+  const filterButtons = document.querySelectorAll(".custom-filter-btn, .dropdown-item[data-filter]");
+  const selectedFilterText = document.getElementById("selectedFilterText");
 
+  function applyFilter(filter) {
+    const items = Array.from(gallery.children);
 
+    if (filter === "all") {
+      // ✅ Restore DB order
+      originalOrder.forEach(el => {
+        el.style.display = "block";
+        gallery.appendChild(el);
+      });
+    }
+    else if (filter === "photos") {
+      items.forEach(item => {
+        const isPhoto = !!item.querySelector("img");
+        item.style.display = isPhoto ? "block" : "none";
+      });
+    }
+    else if (filter === "videos") {
+      items.forEach(item => {
+        const isVideo = !!item.querySelector("video");
+        item.style.display = isVideo ? "block" : "none";
+      });
+    }
+    else if (filter === "most-liked") {
+      const sorted = items.sort((a, b) => {
+        const aLikes = parseInt(a.querySelector(".like-count")?.textContent || "0", 10);
+        const bLikes = parseInt(b.querySelector(".like-count")?.textContent || "0", 10);
+        return bLikes - aLikes;
+      });
+
+      sorted.forEach(el => {
+        el.style.display = "block";
+        gallery.appendChild(el);
+      });
+    }
+
+    // Active state
+    document.querySelectorAll(".custom-filter-btn").forEach(btn =>
+      btn.classList.toggle("active", btn.dataset.filter === filter)
+    );
+
+    if (selectedFilterText) {
+      selectedFilterText.textContent = "Selected: " + filter.charAt(0).toUpperCase() + filter.slice(1);
+    }
+  }
+
+  // Hook events
+  filterButtons.forEach(btn => {
+    btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
+  });
+
+  // Default
+  applyFilter("all");
+}
+
+if (isHost) {
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".delete-btn")) {
+      const btn = e.target.closest(".delete-btn");
+      const wrapper = btn.closest(".media-wrapper");
+      const mediaEl = wrapper.querySelector("img, video");
+
+      showDeleteConfirm([{
+        id: btn.dataset.id,
+        src: mediaEl.currentSrc || mediaEl.dataset.src,
+        type: mediaEl.tagName.toLowerCase()
+      }]);
+    }
+  });
+}
+
+if (isHost) {
+  const manageControls = document.getElementById("manage-controls");
+  const manageToggle = document.getElementById("manage-toggle");
+  const bulkBar = document.getElementById("bulk-delete-bar");
+  const bulkCancel = document.getElementById("bulk-cancel");
+  const bulkDelete = document.getElementById("bulk-delete");
+  const selectedCount = document.getElementById("selected-count");
+
+  manageControls.style.display = "block";
+
+  let selectionMode = false;
+
+  function updateSelectedCount() {
+    const checked = document.querySelectorAll(".select-checkbox:checked");
+    selectedCount.textContent = `${checked.length} selected`;
+  }
+
+  manageToggle.addEventListener("click", () => {
+    selectionMode = !selectionMode;
+    document.querySelectorAll(".select-checkbox").forEach(cb => {
+      cb.style.display = selectionMode ? "block" : "none";
+      cb.checked = false;
+    });
+
+    bulkBar.style.display = selectionMode ? "block" : "none";
+    updateSelectedCount();
+  });
+
+  bulkCancel.addEventListener("click", () => {
+    manageToggle.click(); // exit selection mode
+  });
+
+  document.addEventListener("change", (e) => {
+    if (e.target.classList.contains("select-checkbox")) {
+      updateSelectedCount();
+    }
+  });
+
+  bulkDelete.addEventListener("click", () => {
+  const checked = Array.from(document.querySelectorAll(".select-checkbox:checked"));
+  if (checked.length === 0) return;
+
+  const items = checked.map(cb => {
+    const wrapper = cb.closest(".media-wrapper");
+    const mediaEl = wrapper.querySelector("img, video");
+    return {
+      id: cb.dataset.id,
+      src: mediaEl.currentSrc || mediaEl.dataset.src,
+      type: mediaEl.tagName.toLowerCase()
+    };
+  });
+
+  showDeleteConfirm(items);
+  manageToggle.click(); // exit selection mode after confirm
+});
+
+}
+
+let isManaging = false;
+const gallery = document.getElementById("gallery");
+const manageToggle = document.getElementById("manage-toggle");
+
+manageToggle.addEventListener("click", () => {
+  isManaging = !isManaging;
+  gallery.classList.toggle("managing", isManaging);
+});
+
+let deleteQueue = []; // holds {id, src, type}
+
+const deleteModalEl = document.getElementById("deleteConfirmModal");
+const deleteModal = new bootstrap.Modal(deleteModalEl);
+const deletePreview = document.getElementById("delete-preview");
+const deleteMessage = document.getElementById("delete-message");
+const confirmDeleteBtn = document.getElementById("confirm-delete");
+
+function showDeleteConfirm(items) {
+  deleteQueue = items;
+  deletePreview.innerHTML = "";
+
+  deleteMessage.textContent = items.length === 1
+    ? "Are you sure you want to delete this item?"
+    : `Are you sure you want to delete ${items.length} items?`;
+
+  items.forEach(it => {
+    const thumb = document.createElement(it.type === "video" ? "video" : "img");
+    thumb.src = it.src;
+    thumb.className = "rounded border";
+    thumb.style.width = "80px";
+    thumb.style.height = "80px";
+    thumb.style.objectFit = "cover";
+    if (it.type === "video") thumb.muted = true;
+    deletePreview.appendChild(thumb);
+  });
+
+  deleteModal.show();
+}
+
+confirmDeleteBtn.onclick = () => {
+  deleteQueue.forEach(it => {
+    // remove from DOM
+    const wrapper = document.querySelector(`.media-wrapper[data-id="${it.id}"]`);
+    if (wrapper) wrapper.closest(".masonry-item").remove();
+
+    // backend delete (DB + Cloudinary)
+    fetch(`/delete/${it.id}`, { method: "DELETE" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          console.error("Delete failed:", data.message || data.error);
+        }
+      })
+      .catch(err => console.error("Delete failed:", err));
+  });
+
+  deleteModal.hide();
+};

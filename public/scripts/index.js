@@ -4,8 +4,16 @@ document.getElementById("eventForm").addEventListener("submit", function(e) {
   const passcode = document.getElementById("passcode").value.trim();
 
   if (passcode === "1234") {
-    window.location.href = "media-collection.html"; 
-  } else {
+    // Guest login
+    sessionStorage.setItem("isHost", "false");
+    window.location.href = "home.html"; 
+  } 
+  else if (passcode === "5678") {
+    // Host login
+    sessionStorage.setItem("isHost", "true");
+    window.location.href = "home.html"; 
+  } 
+  else {
     alert("Invalid passcode. Please try again.");
   }
 });
