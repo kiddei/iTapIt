@@ -215,3 +215,67 @@
   border-radius: 20px;
   backdrop-filter: blur(6px);
 }
+
+/* Force delete confirmation above album modal */
+#deleteAlbumConfirm {
+  z-index: 2000 !important;
+  
+}
+#deleteAlbumConfirm.show ~ .modal-backdrop {
+  z-index: 1999 !important;
+}
+
+/* Dark theme for delete modal */
+#deleteAlbumConfirm .modal-content {
+  background-color: #212529;
+  color: #fff;
+   opacity: 1 !important;  
+}
+#deleteAlbumConfirm .modal-header,
+#deleteAlbumConfirm .modal-body,
+#deleteAlbumConfirm .modal-footer {
+  color: #fff;
+    background-color: #212529 !important;
+}
+
+/* Primary hero button (Add to Album) already exists */
+.btn-hero-primary {
+  background: linear-gradient(90deg, #8B5CF6 0%, #3B82F6 100%);
+  color: #fff!important;  
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-hero-primary:hover {
+  opacity: 0.9;
+}
+
+/* Delete button - red */
+.btn-hero-danger {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+  color: #fff!important;  
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-hero-danger:hover {
+  opacity: 0.9;
+}
+
+/* Download button - green */
+.btn-hero-success {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  color: #fff!important;  
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-hero-success:hover {
+  opacity: 0.9;
+}

@@ -1,3 +1,5 @@
+const isHost = sessionStorage.getItem("isHost") === "true";
+
 document.addEventListener("DOMContentLoaded", async function () {
   const albumsGrid = document.querySelector(".row.g-4"); // album grid container
   const createBtn = document.querySelector("#createAlbumModal .btn-hero-primary");
@@ -75,17 +77,41 @@ const col = document.createElement("div");
           <div class="modal-body row g-3" id="album-body-${folder.folder_id}">
             <p class="text-muted">Loading...</p>
           </div>
-          <div class="modal-footer d-flex justify-content-between">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer d-flex justify-content-between align-items-center">
+        <!-- Left: Close button -->
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        <!-- Right: Host buttons -->
+        <div class="d-flex gap-2">
+          ${isHost ? `
+            <button
+              type="button"
+              class="btn btn-hero-success download-album-btn"
+              data-folder-id="${folder.folder_id}"
+              data-folder-name="${folder.folder_name}">
+              Download as Zip
+            </button>
             <button 
+              type="button" 
+              class="btn btn-hero-danger delete-album-btn"
+              data-folder-id="${folder.folder_id}"
+              data-folder-name="${folder.folder_name}">
+              Delete Album
+            </button>
+          ` : ""}
+
+          <!-- Always visible Add to Album -->
+          <button 
             type="button" 
-            class="btn btn-hero-primary text-white add-to-album-btn" 
+            class="btn btn-hero-primary add-to-album-btn" 
             data-folder-id="${folder.folder_id}" 
             data-folder-name="${folder.folder_name}">
-            Add
+            Add to Album
           </button>
-          </div>
         </div>
+      </div>
+
+
       </div>
     </div>
   `;
@@ -174,6 +200,67 @@ const col = document.createElement("div");
     }
   });
 
+
+  if (isHost) {
+  const confirmModal = document.createElement("div");
+  confirmModal.innerHTML = `
+    <div class="modal fade" id="deleteAlbumConfirm" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Album</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p id="delete-album-message" class="mb-0"></p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="confirm-delete-album" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(confirmModal);
+
+  document.getElementById("confirm-delete-album").addEventListener("click", async () => {
+  console.log("Deleting album:", albumToDelete);
+
+  try {
+    const response = await fetch(`/folders/${albumToDelete}`, { method: "DELETE" });
+    const result = await response.json();
+    console.log("Delete result:", result);
+
+    if (result.success) {
+      // Hide album modal
+      const albumModalEl = document.getElementById(`albumModal${albumToDelete}`);
+      const albumModal = bootstrap.Modal.getInstance(albumModalEl);
+      if (albumModal) albumModal.hide();
+
+      // Hide delete confirmation modal
+      const deleteModalEl = document.getElementById("deleteAlbumConfirm");
+      const deleteModal = bootstrap.Modal.getInstance(deleteModalEl);
+      if (deleteModal) deleteModal.hide();
+
+      // Remove album card from grid
+      const albumCard = document.querySelector(`.album-card[data-bs-target="#albumModal${albumToDelete}"]`);
+      albumCard?.closest(".col")?.remove();
+
+      // Remove album modal from DOM
+      albumModalEl?.remove();
+
+      albumToDelete = null;
+    } else {
+      alert("Failed to delete album");
+    }
+  } catch (err) {
+    console.error("❌ Error deleting album:", err);
+  }
+});
+
+
+}
   // ==========================
   // Init
   // ==========================
@@ -233,4 +320,66 @@ document.body.addEventListener("click", (e) => {
     window.location.href = `explore.html?manage=1&album=${albumId}`;
   }
 });
+
+let albumToDelete = null;
+
+document.body.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete-album-btn")) {
+    const folderId = e.target.dataset.folderId;
+    const folderName = e.target.dataset.folderName;
+
+    albumToDelete = folderId;
+    document.getElementById("delete-album-message").textContent =
+      `Are you sure you want to permanently delete the album "${folderName}"? This cannot be undone.`;
+
+    const modal = new bootstrap.Modal(document.getElementById("deleteAlbumConfirm"));
+    modal.show();
+  }
+});
+
+document.body.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("download-album-btn")) {
+    const folderId = e.target.dataset.folderId;
+    const folderName = e.target.dataset.folderName;
+
+    try {
+      const res = await fetch(`/folders/${folderId}/media`);
+      const data = await res.json();
+
+      if (data.success && data.media.length > 0) {
+        const JSZip = window.JSZip ? window.JSZip : null;
+        if (!JSZip) {
+          alert("JSZip library not loaded!");
+          return;
+        }
+
+        const zip = new JSZip();
+
+        // Fetch and add each image to ZIP
+        const fetchPromises = data.media.map(async (m, idx) => {
+          const response = await fetch(m.media_link);
+          const blob = await response.blob();
+          const ext = m.media_link.split('.').pop().split(/\#|\?/)[0];
+          zip.file(`image_${idx + 1}.${ext}`, blob);
+        });
+
+        await Promise.all(fetchPromises);
+
+        // Generate ZIP and trigger download
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = `${folderName}.zip`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } else {
+        alert("No images in this album to download.");
+      }
+    } catch (err) {
+      console.error("❌ Error downloading album:", err);
+      alert("Failed to download album.");
+    }
+  }
+});
+
 

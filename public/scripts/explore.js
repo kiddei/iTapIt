@@ -381,6 +381,7 @@ const bulkBar = document.getElementById("bulk-action-bar");
 
 const bulkCancel = document.getElementById("bulk-cancel");
 const bulkDelete = document.getElementById("bulk-delete");
+const bulkDownload = document.getElementById("bulk-download");
 const bulkAdd = document.getElementById("bulk-add");
 const selectedCount = document.getElementById("selected-count");
 
@@ -402,12 +403,14 @@ manageToggle.addEventListener("click", () => {
 
   bulkBar.style.display = selectionMode ? "block" : "none";
 
-  // 👇 Host vs non-host control
-  if (isHost) {
-    bulkDelete.style.display = "inline-block";
-  } else {
-    bulkDelete.style.display = "none";
-  }
+   // Host-only controls
+    if (isHost) {
+      bulkDelete.classList.remove("d-none");
+      bulkDownload.classList.remove("d-none");
+    } else {
+      bulkDelete.classList.add("d-none");
+      bulkDownload.classList.add("d-none");
+    }
 
   updateSelectedCount();
 });
@@ -618,3 +621,49 @@ confirmAddBtn.onclick = async () => {
     console.error("Add failed:", err);
   }
 };
+
+bulkDownload.addEventListener("click", async () => {
+  const checked = Array.from(document.querySelectorAll(".select-checkbox:checked"));
+  if (checked.length === 0) return;
+
+  const items = checked.map(cb => {
+    const wrapper = cb.closest(".media-wrapper");
+    const mediaEl = wrapper.querySelector("img, video");
+    return {
+      id: cb.dataset.id,
+      src: mediaEl.currentSrc || mediaEl.dataset.src,
+      type: mediaEl.tagName.toLowerCase()
+    };
+  });
+
+  try {
+    if (!window.JSZip) {
+      alert("JSZip library not loaded!");
+      return;
+    }
+
+    const zip = new JSZip();
+
+    // Only download images (skip videos if desired)
+    const fetchPromises = items.map(async (it, idx) => {
+      if (it.type === "img") {
+        const response = await fetch(it.src);
+        const blob = await response.blob();
+        const ext = it.src.split(".").pop().split(/\#|\?/)[0];
+        zip.file(`image_${idx + 1}.${ext}`, blob);
+      }
+    });
+
+    await Promise.all(fetchPromises);
+
+    const content = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = `selected_images.zip`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  } catch (err) {
+    console.error("❌ Error downloading selected images:", err);
+    alert("Failed to download selected images.");
+  }
+});

@@ -297,6 +297,30 @@ app.get("/folders/:id/media", async (req, res) => {
   }
 });
 
+// Delete album + all folder_items
+app.delete("/folders/:id", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const foldersCollection = db.collection("folders");
+    const folderItemsCollection = db.collection("folder_items");
+
+    const folderId = parseInt(req.params.id, 10);
+    if (isNaN(folderId)) {
+      return res.status(400).json({ success: false, message: "Invalid album ID" });
+    }
+
+    // Remove folder
+    await foldersCollection.deleteOne({ folder_id: folderId });
+    // Remove all items inside that folder
+    await folderItemsCollection.deleteMany({ folder_id: folderId });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ Error deleting folder:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 
 // Start server

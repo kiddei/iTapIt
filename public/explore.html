@@ -127,17 +127,17 @@
   </button>
 </div>
 
-<!-- Bulk action bar (fixed bottom) -->
 <div id="bulk-action-bar" class="bulk-delete-bar bg-dark text-white p-3 shadow-lg"
      style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1050;">
   <div class="d-flex justify-content-between align-items-center">
     <span id="selected-count">0 selected</span>
-    <div>
+    <div class="d-flex align-items-center">
       <button id="bulk-cancel" class="btn btn-secondary btn-sm me-2">Cancel</button>
+      <!-- Only show if host -->
+      <button id="bulk-download" class="btn btn-success btn-sm me-2 d-none">Download Selected</button>
+      <button id="bulk-delete" class="btn btn-danger btn-sm me-2 d-none">Delete Selected</button>
       <!-- Always visible -->
-      <button id="bulk-add" class="btn btn-primary btn-sm me-2">Add to Album</button>
-      <!-- Only show this if host -->
-      <button id="bulk-delete" class="btn btn-danger btn-sm" style="display:none;">Delete Selected</button>
+      <button id="bulk-add" class="btn btn-primary btn-sm">Add to Album</button>
     </div>
   </div>
 </div>
@@ -301,6 +301,7 @@
   <!-- Bootstrap JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" 
   integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
   <script src="scripts/swiper.js"></script>
   <script src="scripts/upload.js"></script>
   <script src="scripts/home.js"></script>
