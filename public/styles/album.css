@@ -1,0 +1,172 @@
+/* ================= Album Card ================= */
+.album-card {
+  background-color: rgba(50, 50, 50, 0.6) !important; /* gray transparent */
+  border-radius: 24px; /* rounder corners */
+  overflow: hidden;
+  transition: transform 0.2s, background-color 0.3s;
+  max-width: 600px; /* smaller width */
+  margin: 0 auto;   /* center card in column */
+  padding: 4px;     /* space for border */
+}
+
+.album-card:hover {
+  transform: scale(1.05);
+  background-color: rgba(50, 50, 50, 0.8);
+}
+
+/* Album Grid (Card Preview) */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  grid-template-rows: repeat(2, 100px); /* 2 rows */
+  gap: 3px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.album-grid img,
+.album-grid .placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+}
+
+/* Placeholder slots */
+.album-grid .placeholder {
+  background: rgba(200, 200, 200, 0.25); /* semi-transparent gray */
+}
+
+/* ================= Album Info ================= */
+.album-info {
+  padding: 12px;
+}
+
+.album-meta {
+  color: rgba(255, 255, 255, 0.65); 
+  font-size: 0.9rem;
+}
+
+.album-insight {
+  display: inline-block;
+  background: linear-gradient(90deg, #8B5CF6 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Icons */
+.album-card svg {
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.3s;
+}
+.album-card:hover svg {
+  color: #ffffff;
+}
+
+/* ================= Modal ================= */
+.modal-content {
+  background: rgba(50, 50, 50, 0.6) !important; /* gray transparent */
+  border-radius: 24px;
+  padding: 20px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  color: #fff; /* Ensure text shows up */
+}
+
+/* Modal header/footer separation lines */
+.modal-header, 
+.modal-footer {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal backdrop (outside modal box) */
+/* Fully black modal backdrop */
+.modal-backdrop.show {
+  background-color: #000 !important;
+  opacity: 0.85 !important; /* adjust: 0.7 (lighter) → 0.9 (darker) */
+   transition: background 0.3s ease-in-out;
+}
+/* Modal Title */
+.modal-title {
+  font-size: 1.6rem;  /* bigger */
+  font-weight: 700;   /* bold */
+  color: #fff;        /* white */
+}
+
+/* Modal Description */
+.album-description-text {
+  font-size: 0.95rem;             /* smaller */
+  color: rgba(255, 255, 255, 0.75); /* softer white */
+  line-height: 1.4;
+}
+
+/* Modal photo grid */
+.album-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.album-photos div {
+  background: rgba(200, 200, 200, 0.25);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.album-photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Close button for custom modal (if used outside Bootstrap) */
+.close {
+  font-size: 28px;
+  float: right;
+  cursor: pointer;
+}
+
+/* ================= Clickable Photo ================= */
+/* Lightbox styles */
+.lightbox-modal {
+  display: none;
+  position: fixed;
+  z-index: 2000; /* higher than Bootstrap modal */
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9);
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px; right: 30px;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+
+#createAlbumModal .modal-content {
+  background: rgba(50, 50, 50, 0.85); 
+  color: #fff;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+}
