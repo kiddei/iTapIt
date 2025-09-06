@@ -126,14 +126,18 @@
     Manage
   </button>
 </div>
-<!-- Bulk delete bar (fixed bottom) -->
-<div id="bulk-delete-bar" class="bulk-delete-bar bg-dark text-white p-3 shadow-lg"
+
+<!-- Bulk action bar (fixed bottom) -->
+<div id="bulk-action-bar" class="bulk-delete-bar bg-dark text-white p-3 shadow-lg"
      style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1050;">
   <div class="d-flex justify-content-between align-items-center">
     <span id="selected-count">0 selected</span>
     <div>
       <button id="bulk-cancel" class="btn btn-secondary btn-sm me-2">Cancel</button>
-      <button id="bulk-delete" class="btn btn-danger btn-sm">Delete Selected</button>
+      <!-- Always visible -->
+      <button id="bulk-add" class="btn btn-primary btn-sm me-2">Add to Album</button>
+      <!-- Only show this if host -->
+      <button id="bulk-delete" class="btn btn-danger btn-sm" style="display:none;">Delete Selected</button>
     </div>
   </div>
 </div>
@@ -223,11 +227,11 @@
 </div>
 
 <!-- 🔹 Delete button for host -->
-    <button id="lightbox-delete-btn" 
-            class="delete-btn btn btn-sm btn-danger rounded-pill d-inline-flex align-items-center gap-1"
-            style="display:none">
-      <i class="bi bi-trash"></i>
-    </button>
+   <button id="lightbox-delete-btn" 
+        class="btn btn-danger btn-sm rounded-pill align-items-center gap-1"
+        style="display:none">
+  <i class="bi bi-trash"></i>
+</button>
   </div>
 </div>
 
@@ -246,6 +250,49 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
         <button type="button" id="confirm-delete" class="btn btn-danger btn-sm">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Add-to-Album Modal -->
+<div class="modal fade" id="addToAlbumModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white rounded shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title">Add to Album</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Select an album to add the selected item(s):</p>
+        <div id="add-preview" class="d-flex flex-wrap justify-content-center gap-2 mb-3"></div>
+
+        <!-- Album dropdown -->
+        <select id="album-select" class="form-select bg-dark text-white">
+          <option value="">Choose album...</option>
+          <!-- dynamically populated -->
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirm-add" class="btn btn-primary btn-sm">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addSuccessModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title">Album Updated</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="add-success-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-dismiss="modal">OK</button>
       </div>
     </div>
   </div>

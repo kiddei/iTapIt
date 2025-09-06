@@ -120,100 +120,22 @@
       </button>
   </div>
 
-  <!-- Albums Grid -->
-  <div class="row g-4">
-    <!-- Album 1 -->
-    <div class="col-md-4">
-      <div class="card album-card text-white" data-bs-toggle="modal" data-bs-target="#albumModal1">
-        <!-- Max of 6 only -->
-        <div class="album-grid">
-          <img src="images/1.JPG" alt="">
-          <img src="images/2.JPG" alt="">
-          <img src="images/3.JPG" alt="">
-          <img src="images/4.JPG" alt="">
-          <img src="images/5.JPG" alt="">
-          <div class="placeholder"></div>
-        </div>
-        <div class="card-body text-start p-3">
-          <h5 class="card-title">The Boys</h5>
-          <p class="card-text album-meta">The gang's all here!</p>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="album-insight">5 photos & 0 videos</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Album 2 -->
-    <div class="col-md-4">
-      <div class="card album-card text-white" data-bs-toggle="modal" data-bs-target="#albumModal1">
-        <!-- Max of 6 only -->
-        <div class="album-grid">
-          <div class="placeholder"></div>
-          <div class="placeholder"></div>
-          <div class="placeholder"></div>
-          <div class="placeholder"></div>
-          <div class="placeholder"></div>
-          <div class="placeholder"></div>
-        </div>
-        <div class="card-body text-start p-3">
-          <h5 class="card-title">Untitled</h5>
-          <p class="card-text album-meta">Undescribed</p>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="album-insight">0 photos & 0 videos</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Populate Albums Here -->
-  </div>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <!-- JS inserts here -->
+</div>
 </section>
 
-<!-- Populate Album Modals Here -->
-<!-- Album 1 Modal -->
-<div class="modal fade" id="albumModal1" tabindex="-1" aria-labelledby="albumModal1Label" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-flex justify-content-between align-items-start">
-        <div>
-          <h5 class="modal-title mb-1" id="albumModal1Label">The Boys</h5>
-          <p class="album-description-text mb-0">The gang's all here!</p>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
 
-      <div class="modal-body row g-3">
-        <div class="col-md-3"><img src="images/1.JPG" class="img-fluid rounded album-photo"></div>
-        <div class="col-md-3"><img src="images/2.JPG" class="img-fluid rounded album-photo"></div>
-        <div class="col-md-3"><img src="images/3.JPG" class="img-fluid rounded album-photo"></div>
-        <div class="col-md-3"><img src="images/4.JPG" class="img-fluid rounded album-photo"></div>
-        <div class="col-md-3"><img src="images/5.JPG" class="img-fluid rounded album-photo"></div>
-        <!-- add more photos here -->
-      </div>
-
-      <!-- New Footer with Choose from Drive -->
-      <div class="modal-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        
-        <!-- Choose from Drive button -->
-        <button type="button" class="btn btn-hero-primary text-white">
-          Add
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Lightbox Modal -->
 <div id="lightboxModal" class="lightbox-modal">
   <span class="lightbox-close">&times;</span>
+  
+  <!-- Arrows -->
+<span class="lightbox-prev">&#10094;</span>
+<span class="lightbox-next">&#10095;</span>
+
+  <!-- Image -->
   <img class="lightbox-content" id="lightboxImage">
 </div>
 

@@ -9,6 +9,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Middleware to parse incoming JSON + form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 // MongoDB setup
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -167,6 +172,131 @@ app.delete("/delete/:id", async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// Create album
+app.post("/folders", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const foldersCollection = db.collection("folders");
+
+    const { folder_name, folder_description } = req.body;
+
+    if (!folder_name) {
+      return res.status(400).json({ success: false, message: "Album name is required" });
+    }
+
+    // Get last folder_id
+    const lastDoc = await foldersCollection.find().sort({ folder_id: -1 }).limit(1).toArray();
+    const nextId = lastDoc.length > 0 ? lastDoc[0].folder_id + 1 : 1;
+
+    const newFolder = {
+      folder_id: nextId,
+      folder_name,
+      folder_description: folder_description || ""
+    };
+
+    await foldersCollection.insertOne(newFolder);
+
+    res.json({ success: true, folder: newFolder });
+  } catch (err) {
+    console.error("❌ Error creating folder:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Fetch all folders
+app.get("/folders", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const foldersCollection = db.collection("folders");
+
+    const folders = await foldersCollection.find().sort({ folder_id: 1 }).toArray();
+    res.json(folders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching folders");
+  }
+});
+
+// Add media to album
+app.post("/folder_items", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const folderItemsCollection = db.collection("folder_items");
+
+    const { folder_id, media_ids } = req.body;
+
+    if (!folder_id || !Array.isArray(media_ids) || media_ids.length === 0) {
+      return res.status(400).json({ success: false, message: "Missing folder_id or media_ids" });
+    }
+
+    const folderIdInt = parseInt(folder_id, 10);
+    const mediaIdsInt = media_ids.map(mid => parseInt(mid, 10));
+
+    // 🔹 Find already existing entries
+    const existing = await folderItemsCollection.find({
+      folder_id: folderIdInt,
+      media_id: { $in: mediaIdsInt }
+    }).toArray();
+
+    const existingIds = new Set(existing.map(doc => doc.media_id));
+
+    // 🔹 Filter out duplicates
+    const newDocs = mediaIdsInt
+      .filter(mid => !existingIds.has(mid))
+      .map(mid => ({
+        folder_id: folderIdInt,
+        media_id: mid
+      }));
+
+    let insertedCount = 0;
+    if (newDocs.length > 0) {
+      const result = await folderItemsCollection.insertMany(newDocs);
+      insertedCount = result.insertedCount;
+    }
+
+    const skippedCount = mediaIdsInt.length - insertedCount;
+
+    res.json({
+      success: true,
+      added: insertedCount,
+      skipped: skippedCount
+    });
+  } catch (err) {
+    console.error("❌ Error adding to album:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// server.js
+app.get("/folders/:id/media", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const folderItemsCollection = db.collection("folder_items");
+    const mediaCollection = db.collection("media");
+
+    const folderId = parseInt(req.params.id, 10);
+
+    // find all media_ids inside this album
+    const folderItems = await folderItemsCollection.find({ folder_id: folderId }).toArray();
+    const mediaIds = folderItems.map(fi => fi.media_id);
+
+    let mediaList = [];
+    if (mediaIds.length > 0) {
+      mediaList = await mediaCollection.find({ media_id: { $in: mediaIds } }).toArray();
+    }
+
+    res.json({ success: true, media: mediaList });
+  } catch (err) {
+    console.error("❌ Error fetching album media:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 
 
 // Start server

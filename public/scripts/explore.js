@@ -1,19 +1,21 @@
 // At the top of your index.js (or explore.js)
 const isHost = sessionStorage.getItem("isHost") === "true";
+  let isManaging = false;
+
+const urlParams = new URLSearchParams(window.location.search);
+const isManagingFromUrl = urlParams.get("manage") === "1";
+const preselectAlbumId = urlParams.get("album");
+
 
 
 document.addEventListener("DOMContentLoaded", async () => {
   const gallery = document.getElementById("gallery");
   let originalOrder = []; // will store DB order
 
-  if (isHost) {
-  document.getElementById("manage-controls").style.display = "block";
-} else {
-  const el = document.getElementById("manage-controls");
-  if (el) el.remove(); // completely remove from DOM
-}
 
-  try {
+
+
+    try {
     // 🔹 Fetch from backend
     const res = await fetch("/media");
     const mediaList = await res.json();
@@ -21,57 +23,62 @@ document.addEventListener("DOMContentLoaded", async () => {
     gallery.innerHTML = "";
 
     mediaList.forEach(item => {
-  const div = document.createElement("div");
-  div.className = "masonry-item";
+      const div = document.createElement("div");
+      div.className = "masonry-item";
 
-  div.innerHTML = `
-    <div class="media-wrapper" data-id="${item.media_id}">
-      ${item.format.match(/mp4|mov|webm/i)
-        ? `<video data-src="${item.media_link}" preload="none" muted playsinline loop class="lazy"></video>`
-        : `<img data-src="${item.media_link}" alt="${item.cloudinary_id}" class="lazy">`
-      }
-      <div class="like-overlay">
-        <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 
-                   4.5 2.09C13.09 3.81 14.76 3 16.5 3 
-                   19.58 3 22 5.42 22 8.5c0 3.78-3.4 
-                   6.86-8.55 11.54L12 21.35z"/>
-        </svg>
-        <span class="like-count">${item.reactions || 0}</span>
-      </div>
+      div.innerHTML = `
+        <div class="media-wrapper" data-id="${item.media_id}">
+          ${item.format.match(/mp4|mov|webm/i)
+            ? `<video data-src="${item.media_link}" preload="none" muted playsinline loop class="lazy"></video>`
+            : `<img data-src="${item.media_link}" alt="${item.cloudinary_id}" class="lazy">`
+          }
+          <div class="like-overlay">
+            <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 
+                       4.5 2.09C13.09 3.81 14.76 3 16.5 3 
+                       19.58 3 22 5.42 22 8.5c0 3.78-3.4 
+                       6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span class="like-count">${item.reactions || 0}</span>
+          </div>
 
-   
+          <input type="checkbox" class="select-checkbox form-check-input"
+                 style="display:none; position:absolute; top:8px; left:8px; z-index:10;"
+                 data-id="${item.media_id}">
 
-${isHost ? `
-  <input type="checkbox" class="select-checkbox form-check-input" 
-         style="display:none; position:absolute; top:8px; left:8px; z-index:10;"
-         data-id="${item.media_id}">
-  <button class="delete-btn btn btn-sm btn-danger rounded-pill align-items-center gap-1"
-        data-id="${item.media_id}" aria-label="Delete">
-  <i class="bi bi-trash"></i>
-</button>
-` : ""}
-
-    </div>
-  `;
-  gallery.appendChild(div);
-});
+          ${isHost ? `
+            <button class="delete-btn btn btn-sm btn-danger rounded-pill align-items-center gap-1"
+                  data-id="${item.media_id}" aria-label="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          ` : ""}
+        </div>
+      `;
+      gallery.appendChild(div);
+    });
 
     // ✅ Capture original DB order AFTER rendering
     originalOrder = Array.from(gallery.children);
 
-    // Init helpers
     setupLazyLoading();
     setupLightbox();
-
-
-    // Setup filters
     setupFilters(gallery, originalOrder);
+
+    // 🔹 Now apply managing mode if URL said so
+    if (isManagingFromUrl) {
+      isManaging = true;
+      gallery.classList.add("managing");
+      document.querySelectorAll(".select-checkbox").forEach(cb => {
+        cb.style.display = "block";
+      });
+      bulkBar.style.display = "block";  // or "flex" depending on your CSS
+    }
 
   } catch (err) {
     console.error("Failed to load media:", err);
   }
+
 });
 
 /* ====================
@@ -368,67 +375,78 @@ if (isHost) {
   });
 }
 
-if (isHost) {
-  const manageControls = document.getElementById("manage-controls");
-  const manageToggle = document.getElementById("manage-toggle");
-  const bulkBar = document.getElementById("bulk-delete-bar");
-  const bulkCancel = document.getElementById("bulk-cancel");
-  const bulkDelete = document.getElementById("bulk-delete");
-  const selectedCount = document.getElementById("selected-count");
+const manageControls = document.getElementById("manage-controls");
+const manageToggle = document.getElementById("manage-toggle");
+const bulkBar = document.getElementById("bulk-action-bar");
 
-  manageControls.style.display = "block";
+const bulkCancel = document.getElementById("bulk-cancel");
+const bulkDelete = document.getElementById("bulk-delete");
+const bulkAdd = document.getElementById("bulk-add");
+const selectedCount = document.getElementById("selected-count");
 
-  let selectionMode = false;
+manageControls.style.display = "block"; // always visible now
 
-  function updateSelectedCount() {
-    const checked = document.querySelectorAll(".select-checkbox:checked");
-    selectedCount.textContent = `${checked.length} selected`;
-  }
+let selectionMode = false;
 
-  manageToggle.addEventListener("click", () => {
-    selectionMode = !selectionMode;
-    document.querySelectorAll(".select-checkbox").forEach(cb => {
-      cb.style.display = selectionMode ? "block" : "none";
-      cb.checked = false;
-    });
-
-    bulkBar.style.display = selectionMode ? "block" : "none";
-    updateSelectedCount();
-  });
-
-  bulkCancel.addEventListener("click", () => {
-    manageToggle.click(); // exit selection mode
-  });
-
-  document.addEventListener("change", (e) => {
-    if (e.target.classList.contains("select-checkbox")) {
-      updateSelectedCount();
-    }
-  });
-
-  bulkDelete.addEventListener("click", () => {
-  const checked = Array.from(document.querySelectorAll(".select-checkbox:checked"));
-  if (checked.length === 0) return;
-
-  const items = checked.map(cb => {
-    const wrapper = cb.closest(".media-wrapper");
-    const mediaEl = wrapper.querySelector("img, video");
-    return {
-      id: cb.dataset.id,
-      src: mediaEl.currentSrc || mediaEl.dataset.src,
-      type: mediaEl.tagName.toLowerCase()
-    };
-  });
-
-  showDeleteConfirm(items);
-  manageToggle.click(); // exit selection mode after confirm
-});
-
+function updateSelectedCount() {
+  const checked = document.querySelectorAll(".select-checkbox:checked");
+  selectedCount.textContent = `${checked.length} selected`;
 }
 
-let isManaging = false;
+manageToggle.addEventListener("click", () => {
+  selectionMode = !selectionMode;
+  document.querySelectorAll(".select-checkbox").forEach(cb => {
+    cb.style.display = selectionMode ? "block" : "none";
+    cb.checked = false;
+  });
+
+  bulkBar.style.display = selectionMode ? "block" : "none";
+
+  // 👇 Host vs non-host control
+  if (isHost) {
+    bulkDelete.style.display = "inline-block";
+  } else {
+    bulkDelete.style.display = "none";
+  }
+
+  updateSelectedCount();
+});
+
+bulkCancel.addEventListener("click", () => {
+  manageToggle.click(); // exit selection mode
+});
+
+document.addEventListener("change", (e) => {
+  if (e.target.classList.contains("select-checkbox")) {
+    updateSelectedCount();
+  }
+});
+
+// Host-only bulk delete
+if (isHost) {
+  bulkDelete.addEventListener("click", () => {
+    const checked = Array.from(document.querySelectorAll(".select-checkbox:checked"));
+    if (checked.length === 0) return;
+
+    const items = checked.map(cb => {
+      const wrapper = cb.closest(".media-wrapper");
+      const mediaEl = wrapper.querySelector("img, video");
+      return {
+        id: cb.dataset.id,
+        src: mediaEl.currentSrc || mediaEl.dataset.src,
+        type: mediaEl.tagName.toLowerCase()
+      };
+    });
+
+    showDeleteConfirm(items);
+    manageToggle.click(); // exit selection mode
+  });
+}
+
+
+
+
 const gallery = document.getElementById("gallery");
-const manageToggle = document.getElementById("manage-toggle");
 
 manageToggle.addEventListener("click", () => {
   isManaging = !isManaging;
@@ -442,6 +460,10 @@ const deleteModal = new bootstrap.Modal(deleteModalEl);
 const deletePreview = document.getElementById("delete-preview");
 const deleteMessage = document.getElementById("delete-message");
 const confirmDeleteBtn = document.getElementById("confirm-delete");
+
+const addSuccessModalEl = document.getElementById("addSuccessModal");
+const addSuccessModal = new bootstrap.Modal(addSuccessModalEl);
+const addSuccessMessage = document.getElementById("add-success-message");
 
 function showDeleteConfirm(items) {
   deleteQueue = items;
@@ -483,4 +505,116 @@ confirmDeleteBtn.onclick = () => {
   });
 
   deleteModal.hide();
+};
+
+let addQueue = []; // holds {id, src, type}
+
+const addModalEl = document.getElementById("addToAlbumModal");
+const addModal = new bootstrap.Modal(addModalEl);
+const addPreview = document.getElementById("add-preview");
+const albumSelect = document.getElementById("album-select");
+const confirmAddBtn = document.getElementById("confirm-add");
+
+async function showAddToAlbum(items) {
+  addQueue = items;
+  addPreview.innerHTML = "";
+
+  items.forEach(it => {
+    const thumb = document.createElement(it.type === "video" ? "video" : "img");
+    thumb.src = it.src;
+    thumb.className = "rounded border";
+    thumb.style.width = "80px";
+    thumb.style.height = "80px";
+    thumb.style.objectFit = "cover";
+    if (it.type === "video") thumb.muted = true;
+    addPreview.appendChild(thumb);
+  });
+
+  await populateAlbumDropdown(); 
+  addModal.show();
+}
+
+
+bulkAdd.addEventListener("click", () => {
+  const checked = Array.from(document.querySelectorAll(".select-checkbox:checked"));
+  if (checked.length === 0) return;
+
+  const items = checked.map(cb => {
+    const wrapper = cb.closest(".media-wrapper");
+    const mediaEl = wrapper.querySelector("img, video");
+    return {
+      id: cb.dataset.id,
+      src: mediaEl.currentSrc || mediaEl.dataset.src,
+      type: mediaEl.tagName.toLowerCase()
+    };
+  });
+
+  showAddToAlbum(items);
+});
+
+
+async function populateAlbumDropdown() {
+  try {
+    const res = await fetch("/folders");
+    const albums = await res.json();
+
+    albumSelect.innerHTML = `<option value="">Choose album...</option>`;
+    albums.forEach(folder => {
+      const opt = document.createElement("option");
+      opt.value = folder.folder_id;
+      opt.textContent = folder.folder_name;
+      if (preselectAlbumId && preselectAlbumId == folder.folder_id) {
+        opt.selected = true;
+      }
+      albumSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error fetching albums:", err);
+  }
+}
+
+confirmAddBtn.onclick = async () => {
+  const folder_id = albumSelect.value;
+  const folder_name = albumSelect.options[albumSelect.selectedIndex]?.textContent;
+  if (!folder_id) {
+    alert("Please choose an album.");
+    return;
+  }
+
+  const media_ids = addQueue.map(it => it.id);
+
+  try {
+    const res = await fetch("/folder_items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ folder_id, media_ids })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      addModal.hide();
+
+      // 🔹 Build message
+      let msg = `${data.added} file${data.added !== 1 ? "s" : ""} added to "${folder_name}".`;
+      if (data.skipped > 0) {
+        msg += ` ${data.skipped} file${data.skipped !== 1 ? "s were" : " was"} already in the album.`;
+      }
+
+      addSuccessMessage.textContent = msg;
+      addSuccessModal.show();
+
+      // 🔹 Exit managing mode
+      isManaging = false;
+      gallery.classList.remove("managing");
+      document.querySelectorAll(".select-checkbox").forEach(cb => {
+        cb.style.display = "none";
+        cb.checked = false;
+      });
+      bulkBar.style.display = "none";
+    } else {
+      console.error("Add failed:", data.message || data.error);
+    }
+  } catch (err) {
+    console.error("Add failed:", err);
+  }
 };
