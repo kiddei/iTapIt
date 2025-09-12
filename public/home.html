@@ -7,6 +7,7 @@
   <!-- Custom Style -->
   <link rel="stylesheet" href="styles/home.css">
   <link rel="stylesheet" href="styles/swiper.css">
+  <link rel="stylesheet" href="styles/pop-up.css">
   <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" 
   integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
@@ -90,23 +91,129 @@
           and scrambled it to make a type specimen book. 
         </p>
         
-        <!-- Hero Buttons -->
-        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
-          <a href="explore.html" class="btn btn-hero-primary btn-lg px-4 py-3 rounded-pill text-white d-flex align-items-center gap-2" style="min-width: 180px;">
+       <!-- Hero Buttons -->
+        <div class="d-flex flex-column flex-sm-row gap-4 justify-content-center align-items-center mb-4">
+          <a href="explore.html" class="btn btn-hero-primary btn-lg px-4 py-3 text-white d-flex align-items-center gap-2 btn-fixed" style="border-radius: 8px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
               <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
               <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2.002 3h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14.002 5a1 1 0 0 0-1-1h-10a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947z"/>
             </svg>
             Browse Gallery
+
+            <!-- Chevron, hidden by default -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" 
+                class="bi bi-chevron-right chevron" style="display:none;">
+              <path fill-rule="evenodd" d="M6.646 1.646a.5.5 0 0 1 .708 0L12.354 7l-5 5a.5.5 0 0 1-.708-.708L11.293 7 6.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
           </a>
           
-          <a href="album.html" class="btn btn-hero-secondary btn-lg px-4 py-3 rounded-pill d-flex align-items-center gap-2" style="min-width: 180px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+          <a href="album.html" class="btn btn-album btn-lg px-4 py-3 d-flex align-items-center gap-2 btn-fixed" style="border-radius: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#9D4EDD" class="bi bi-plus-circle" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
             </svg>
             Create Album
+            <!-- Chevron, hidden by default -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" 
+                class="bi bi-chevron-right chevron" style="display:none;">
+              <path fill-rule="evenodd" d="M6.646 1.646a.5.5 0 0 1 .708 0L12.354 7l-5 5a.5.5 0 0 1-.708-.708L11.293 7 6.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
           </a>
+        </div>
+
+        <!-- Second Row -->
+        <div class="d-flex flex-column flex-sm-row gap-4 justify-content-center align-items-center">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#messageModal" class="btn btn-message btn-lg px-4 py-3 d-flex align-items-center gap-2 btn-fixed">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#60A5FA" class="bi bi-send-plus-fill" viewBox="0 0 16 16">
+              <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 1.59 2.498C8 14 8 13 8 12.5a4.5 4.5 0 0 1 5.026-4.47zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+              <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1h-1a.5.5 0 0 0 0 1h1v1a.5.5 0 0 0 1 0v-1h1a.5.5 0 0 0 0-1h-1v-1a.5.5 0 0 0-.5-.5"/>
+            </svg>
+            Send Message
+            <!-- Chevron, hidden by default -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" 
+                class="bi bi-chevron-right chevron" style="display:none;">
+              <path fill-rule="evenodd" d="M6.646 1.646a.5.5 0 0 1 .708 0L12.354 7l-5 5a.5.5 0 0 1-.708-.708L11.293 7 6.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+          </a>
+
+          <!-- Popup Modal -->
+          <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content custom-modal">
+                
+                <!-- Modal Header -->
+                <div class="modal-header border-0">
+                  <h5 class="modal-title text-white" id="messageModalLabel">Send a Message</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <!-- Modal Body (Form) -->
+                <div class="modal-body">
+                  <form id="messageForm">
+                    <div class="mb-3 text-start">
+                      <label for="recipient" class="form-label text-white">Recipient</label>
+                      <input type="text" class="form-control" id="recipient" placeholder="Enter recipient name" required>
+                    </div>
+                    <div class="mb-3 text-start">
+                      <label for="subject" class="form-label text-white">Subject</label>
+                      <input type="text" class="form-control" id="subject" placeholder="Enter subject" required>
+                    </div>
+                    <div class="mb-3 text-start">
+                      <label for="messageText" class="form-label text-white">Message</label>
+                      <textarea class="form-control" id="messageText" rows="4" placeholder="Write your message..." required></textarea>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="modal-footer border-0">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" form="messageForm" class="btn btn-primary">Send</button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+          <a href="#" data-bs-toggle="modal" data-bs-target="#giftModal" class="btn btn-gift btn-lg px-4 py-3 d-flex align-items-center gap-2 btn-fixed">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#F472B6" class="bi bi-gift-fill" viewBox="0 0 16 16">
+              <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A3 3 0 0 1 3 2.506zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43zM9 3h2.932l.023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0zm6 4v7.5a1.5 1.5 0 0 1-1.5 1.5H9V7zM2.5 16A1.5 1.5 0 0 1 1 14.5V7h6v9z"/>
+            </svg>
+            Send Gift
+            <!-- Chevron, hidden by default -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" 
+                class="bi bi-chevron-right chevron" style="display:none;">
+              <path fill-rule="evenodd" d="M6.646 1.646a.5.5 0 0 1 .708 0L12.354 7l-5 5a.5.5 0 0 1-.708-.708L11.293 7 6.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+          </a>
+
+          <!-- ✅ Gift Popup Modal -->
+          <div class="modal fade" id="giftModal" tabindex="-1" aria-labelledby="giftModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content gift-modal">
+                
+                <!-- Modal Header -->
+                <div class="modal-header border-0">
+                  <h5 class="modal-title text-white" id="giftModalLabel">Send a Gift via <span class="fw-bold text-primary">GCash</span></h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="modal-body text-center">
+                  <!-- Replace the src with your actual GCash QR image -->
+                  <img src="images/gcash-qr.jpg" alt="GCash QR" class="img-fluid rounded shadow" style="max-width: 360px;">
+                  <p class="text-white mt-3">GCash Number: <strong>0945-760-0330</strong></p>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="modal-footer border-0 justify-content-center">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

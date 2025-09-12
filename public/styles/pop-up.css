@@ -1,0 +1,32 @@
+ /* Transparent gray modal background */
+  .modal-content.custom-modal {
+    background: rgba(30, 30, 30, 0.85) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(6px);
+  }
+
+  /* Left align labels */
+  .modal-content.custom-modal .form-label {
+    text-align: left !important;
+    display: block !important;
+  }
+
+  /* Input styling */
+  .modal-content.custom-modal .form-control {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .modal-content.custom-modal .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+
+   .gift-modal {
+    background: rgba(30, 30, 30, 0.9) !important;
+    border-radius: 12px !important;
+    color: white;
+    backdrop-filter: blur(6px);
+  }
