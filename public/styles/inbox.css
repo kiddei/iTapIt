@@ -1,0 +1,66 @@
+.sticky-note {
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+  font-family: "Segoe UI", sans-serif;
+  position: relative;
+  min-height: 150px;
+  transform: rotate(-1deg);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Color variations by column */
+.col:nth-child(1n) .sticky-note { background: #fff9a6; } /* yellow */
+.col:nth-child(2n) .sticky-note { background: #ffdca8; } /* orange */
+.col:nth-child(3n) .sticky-note { background: #ffd1dc; } /* pink */
+.col:nth-child(4n) .sticky-note { background: #c6f6d5; } /* green */
+.col:nth-child(5n) .sticky-note { background: #bae6fd; } /* blue */
+
+/* Hover effect */
+.sticky-note:hover {
+  transform: scale(1.05) rotate(0deg);
+  z-index: 5;
+}
+
+/* Pushpin */
+.sticky-note::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: red;
+  border-radius: 50%;
+  border: 2px solid #900;
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Note text styling */
+.note-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+.note-message {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.note-date {
+  font-size: 0.8rem;
+  color: #555;
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.75rem;
+}
+
+.note-subject {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
