@@ -5,6 +5,41 @@ document.addEventListener("DOMContentLoaded", () => {
         link.classList.add("active");
       }
     });
+
+  const isHost = sessionStorage.getItem("isHost") === "true";
+  console.log("Is Host:", isHost);
+
+  const btn = document.getElementById("messageActionBtn");
+  const text = document.getElementById("messageActionText");
+  const sendIcon = document.getElementById("sendIcon");
+
+   const navLinks = document.getElementById("navLinks");
+
+    if (isHost) {
+      navLinks.insertAdjacentHTML("beforeend", `
+        <li class="nav-item">
+          <a class="nav-link px-3 text-white" href="inbox.html">Inbox</a>
+        </li>
+      `);
+    }
+
+  if (isHost) {
+    // Change text
+    text.textContent = "View Messages";
+
+    // Remove modal trigger
+    btn.removeAttribute("data-bs-toggle");
+    btn.removeAttribute("data-bs-target");
+
+    // Change destination
+    btn.setAttribute("href", "inbox.html");
+
+    // Swap icon (optional: keep same icon if you prefer)
+    sendIcon.outerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#60A5FA" class="bi bi-envelope-fill">
+      <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Z"/>
+    </svg>`;
+  }
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -120,4 +155,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to hydrate Featured Photos:", err);
   }
 });
+
+document.getElementById("messageForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const sender = document.getElementById("sender").value.trim();
+  const message = document.getElementById("messageText").value.trim();
+
+  if (!sender || !message) return;
+
+  const res = await fetch("/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sender, message })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    e.target.reset();
+  } else {
+    alert("❌ Failed to save message");
+  }
+
+   e.preventDefault(); // stop default form submit
+
+  // simulate successful send
+  const messageModal = bootstrap.Modal.getInstance(document.getElementById("messageModal"));
+  messageModal.hide();
+
+  // after a short delay, show confirmation modal
+  setTimeout(() => {
+    const successModal = new bootstrap.Modal(document.getElementById("messageSuccessModal"));
+    successModal.show();
+  }, 300);
+});
+
 

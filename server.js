@@ -322,6 +322,51 @@ app.delete("/folders/:id", async (req, res) => {
   }
 });
 
+// Create a new message
+app.post("/messages", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const messagesCollection = db.collection("messages");
+
+    const { sender, message } = req.body;
+
+    if (!sender || !message) {
+      return res.status(400).json({ success: false, message: "Sender and message are required" });
+    }
+
+    const newMessage = {
+      sender,
+      message,
+      datesent: new Date()
+    };
+
+    const result = await messagesCollection.insertOne(newMessage);
+
+    res.json({ success: true, id: result.insertedId, message: newMessage });
+  } catch (err) {
+    console.error("❌ Error adding message:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Get all messages
+app.get("/messages", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const messagesCollection = db.collection("messages");
+
+    const messages = await messagesCollection.find().sort({ datesent: -1 }).toArray();
+
+    res.json({ success: true, messages });
+  } catch (err) {
+    console.error("❌ Error fetching messages:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
 
 // Start server
 app.listen(port, () => {
