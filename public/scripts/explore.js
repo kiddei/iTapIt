@@ -8,15 +8,11 @@ const preselectAlbumId = urlParams.get("album");
 
 
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function loadGallery() {
   const gallery = document.getElementById("gallery");
-  let originalOrder = []; // will store DB order
+  if (!gallery) return; // safeguard if not on explore.html
 
-
-
-
-    try {
-    // 🔹 Fetch from backend
+  try {
     const res = await fetch("/media");
     const mediaList = await res.json();
 
@@ -58,28 +54,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       gallery.appendChild(div);
     });
 
-    // ✅ Capture original DB order AFTER rendering
-    originalOrder = Array.from(gallery.children);
-
     setupLazyLoading();
     setupLightbox();
-    setupFilters(gallery, originalOrder);
-
-    // 🔹 Now apply managing mode if URL said so
-    if (isManagingFromUrl) {
-      isManaging = true;
-      gallery.classList.add("managing");
-      document.querySelectorAll(".select-checkbox").forEach(cb => {
-        cb.style.display = "block";
-      });
-      bulkBar.style.display = "block";  // or "flex" depending on your CSS
-    }
+    setupFilters(gallery, Array.from(gallery.children));
 
   } catch (err) {
     console.error("Failed to load media:", err);
   }
+}
 
-});
+// Initial load
+document.addEventListener("DOMContentLoaded", loadGallery);
+
 
 /* ====================
    Lazy Loading

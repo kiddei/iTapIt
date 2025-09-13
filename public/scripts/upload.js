@@ -77,14 +77,12 @@ function showPreview(files) {
 confirmBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (selectedFiles.length === 0 || isProcessingUpload) return;
 
-    // Set flag to prevent double processing
     isProcessingUpload = true;
-    
-    // Disable the confirm button to prevent multiple clicks
     confirmBtn.disabled = true;
+
     const originalText = confirmBtn.textContent;
     confirmBtn.textContent = "Uploading...";
 
@@ -98,6 +96,7 @@ confirmBtn.addEventListener("click", async (e) => {
                 continue;
             }
 
+            // Upload to Cloudinary
             const formData = new FormData();
             formData.append("file", file);
             formData.append("api_key", apiKey);
@@ -105,23 +104,33 @@ confirmBtn.addEventListener("click", async (e) => {
             formData.append("signature", signature);
             formData.append("folder", folder);
 
-            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
-                method: "POST",
-                body: formData,
-            });
+            const uploadRes = await fetch(
+                `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+                { method: "POST", body: formData }
+            );
 
             const data = await uploadRes.json();
-            console.log("Uploaded:", data);
+            console.log("✅ Uploaded to Cloudinary:", data);
+
+            // 🔥 Save uploaded media metadata into MongoDB
+            await fetch("/media", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
         }
 
-        alert("✅ Upload complete!");
-        
+        if (typeof loadGallery === "function") {
+    loadGallery();
+}
+
     } catch (error) {
-        console.error("Upload error:", error);
+        console.error("❌ Upload error:", error);
         alert("❌ Upload failed. Please try again.");
     } finally {
-        // Clean up - this is the most important part
         cleanupUploadState();
+        confirmBtn.textContent = originalText;
+        confirmBtn.disabled = false;
     }
 });
 
