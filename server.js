@@ -123,6 +123,58 @@ app.get("/media", async (req, res) => {
   }
 });
 
+// Add new media after successful Cloudinary upload
+app.post("/media", async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("SharedLens");
+    const mediaCollection = db.collection("media");
+
+    const {
+      public_id,
+      secure_url,
+      format,
+      width,
+      height,
+      bytes,
+      created_at,
+      tags = []
+    } = req.body;
+
+    if (!public_id || !secure_url) {
+      return res.status(400).json({ success: false, message: "Missing Cloudinary data" });
+    }
+
+    // Get the current highest media_id
+    const lastDoc = await mediaCollection.find().sort({ media_id: -1 }).limit(1).toArray();
+    const nextId = lastDoc.length > 0 ? lastDoc[0].media_id + 1 : 1;
+
+    const isFeatured = (tags.includes("featured")) ? 1 : 0;
+
+    const newMedia = {
+      media_id: nextId,
+      cloudinary_id: public_id,
+      media_link: secure_url,
+      format,
+      width,
+      height,
+      bytes,
+      created_at: created_at ? new Date(created_at) : new Date(),
+      reactions: 0,
+      tags,
+      is_featured: isFeatured
+    };
+
+    await mediaCollection.insertOne(newMedia);
+
+    res.json({ success: true, media: newMedia });
+  } catch (err) {
+    console.error("❌ Error saving media:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
 // Increment like count for a media item
 app.post("/like/:id", async (req, res) => {
   try {
